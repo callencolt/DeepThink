@@ -1,0 +1,97 @@
+bw = 4;
+v = 0.1;
+theta = 55;
+d = 90: -v: 2;
+N = length(d);
+
+figure;
+hold on;
+
+% Set axis limits to cover the entire screen (this will determine the visible range)
+axis([-100, 100, -20, 30]);  % Adjust these limits for the visible area
+
+% Get the current x-axis limits
+xlimits = xlim;
+
+% Water surface waves (covering entire screen width)
+wave_x = linspace(xlimits(1), xlimits(2), 100);  % Generate wave x data across full screen width
+wave_line = plot(wave_x, 0.3 * sin(0.3 * wave_x), 'b', 'LineWidth', 2);
+
+
+rectangle('Position',[-0.75,0,1.5,3], 'FaceColor', [1, 0.55, 0]);
+artag = imread('ArTag.jpg');
+image(flipud(artag), 'XData',[-0.5,0.5], 'YData', [1,2]*1.45);
+
+% Cleat left leg rectangle
+%rectangle('Position', [-0.25, 0.0, 0.1, 0.5], 'FaceColor', [0.8 0.8 0.8]);  
+
+% Cleat right leg rectangle
+%rectangle('Position', [0.125, 0.0, 0.1, 0.5], 'FaceColor', [0.8 0.8 0.8]);
+
+% Cleat left leg rectangle
+rectangle('Position', [-0.25, 0.0, 0.1, 1.2], 'FaceColor', [0.8 0.8 0.8]);  
+
+% Cleat right leg rectangle
+rectangle('Position', [0.125, 0.0, 0.1, 1.2], 'FaceColor', [0.8 0.8 0.8]);
+
+% Cleat top rectangle
+topRect = rectangle('Position', [-0.5, 1, 1, 0.4], 'FaceColor', 'k');  
+uistack(topRect,'up', 1);
+
+% Rectangle for background color (buoy)
+botrect = rectangle('Position',[-2,-1,4,1], 'FaceColor',[1, 0.55, 0]);
+uistack(botrect,'down', 3);
+
+for i = 1:10:N
+    % Update wave animation across the whole screen    
+    vw = 2 * d(i) * sind(theta);
+    xmax = vw / 2;
+    xmin = -xmax;
+    ymax = (3 / 4) * xmax + 2;
+    ymin = -ymax + 2;
+    
+    axis([xmin-1, xmax+1, ymin, ymax]);  % Update axis limits based on wave movement
+    
+    drawnow;  % Update the plot at each step
+end
+x = [0.7, 0.3, 0.4, 0.8, 0.9, 0.55, 1.0];
+y = [0.1, 0.3, 0.35, 0.5, 0.45, 0.3, 0.1];
+x2 = 2.2-[0.7, 0.3, 0.4, 0.8, 0.9, 0.55, 1.0];
+y2 = [0.1, 0.3, 0.35, 0.5, 0.45, 0.3, 0.1];
+
+
+hold on;
+arm1 = patch(x,y, 'b', 'LineWidth',4);
+arm2 = patch(x2,y2, 'b', 'LineWidth',4);
+
+%axis([0 2.2 0 1]);
+% Optional: push arms to back (but still before cleat legs)
+uistack(arm1,'down', 3);
+uistack(arm2,'down', 2);
+scale = 2.3;
+
+
+x_matrix(:,5) = [0.9; 1; 1.1; 1.2];
+x_matrix = scale*([
+    0.7,  0.35,  0.4,  0.8, 0.9, 0.55, 1.0;
+    0.71, 0.38, 0.47, 0.9, 0.95, 0.6,  0.99;
+    0.72, 0.45,  0.57,  1.0, 1.0, 0.68, 0.98;
+    0.73, 0.5, 0.61, 1.1, 1.0, 0.74,  0.97]-1.12);
+
+y_matrix = scale*2*([
+    0.1, 0.30, 0.35, 0.5, 0.45, 0.3, 0.1;
+    0.1, 0.32, 0.37, 0.45, 0.4, 0.31, 0.1;
+    0.1, 0.34, 0.38, 0.42, 0.35, 0.31, 0.1;
+    0.1, 0.36, 0.38, 0.37, 0.30, 0.3, 0.1]-.28);
+
+x2_matrix = (2.2 - x_matrix)-2.25;
+y2_matrix = y_matrix;
+for i=1:4
+        set(arm1, 'XData', x_matrix(i,:));
+        set(arm1, 'YData', y_matrix(i,:));
+        set(arm2, 'XData', x2_matrix(i,:));
+        set(arm2, 'YData', y2_matrix(i,:));
+        drawnow;
+        pause(1);
+        
+end
